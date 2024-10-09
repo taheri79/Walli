@@ -44,6 +44,7 @@ dependencies:
   hive: ^2.2.3
   flutter_launcher_icons: ^0.13.1
   windows_single_instance: ^1.0.1
+  system_theme: ^3.1.1
 
 dev_dependencies:
   flutter_test:

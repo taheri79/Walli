@@ -14,6 +14,7 @@ import 'package:launch_at_startup/launch_at_startup.dart';
 import 'package:walli/FancyButton.dart';
 import 'package:window_manager/window_manager.dart';
 import 'package:windows_single_instance/windows_single_instance.dart';
+import 'package:system_theme/system_theme.dart';
 
 
 void main(List<String> args) async {
@@ -69,6 +70,7 @@ void main(List<String> args) async {
   if(selectedTime != 0){
     scheduleWallpaperChange(Duration(seconds: selectedTime));
   }
+  await SystemTheme.accentColor.load();
   runApp(MyApp());
   Future.delayed(const Duration(seconds: 1),() async{
     await windowManager.center(animate: true);
@@ -260,102 +262,105 @@ class _MyAppState extends State<MyApp> with WindowListener  {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Walli',
-      debugShowCheckedModeBanner: false,
-      theme: ThemeData(
-          colorScheme: ColorScheme.fromSeed(seedColor: Colors.purple),
+    return SystemThemeBuilder(builder: (context, accent) {
+      return MaterialApp(
+        title: 'Walli',
+        debugShowCheckedModeBanner: false,
+        theme: ThemeData(
+          colorScheme: ColorScheme.fromSeed(seedColor: accent.accent),
           useMaterial3: true,
-      ),
-      home: Scaffold(
-        body: SafeArea(
-          child: Container(
-            child: Column(
-              children: [
-                GestureDetector(
-                  onPanStart: (details) async {
-                    await windowManager.startDragging();
-                  },
-                  onDoubleTap: (){
-                    windowManager.center(animate: true);
-                  },
-                  child: Container(
-                    height: Theme.of(context).bottomAppBarTheme.height,
-                    decoration: BoxDecoration(
-                      color: Theme.of(context).colorScheme.primary,
-                    ),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        // Drag Area
-                        Expanded(
-                          child: Padding(
-                            padding: const EdgeInsets.symmetric(horizontal: 10.0),
-                            child: Row(
-                              children: [
-                                Image.asset('assets/walli.png',width: 25,),
-                                SizedBox(width: 5),
-                                Text(
-                                  'Walli',
-                                  style: TextStyle(color: Colors.white70, fontSize: 18),
-                                ),
-                              ],
+        ),
+        home: Scaffold(
+          body: SafeArea(
+            child: Container(
+              child: Column(
+                children: [
+                  GestureDetector(
+                    onPanStart: (details) async {
+                      await windowManager.startDragging();
+                    },
+                    onDoubleTap: (){
+                      windowManager.center(animate: true);
+                    },
+                    child: Container(
+                      height: Theme.of(context).bottomAppBarTheme.height,
+                      decoration: BoxDecoration(
+                        color: accent.accent,
+                      ),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          // Drag Area
+                          Expanded(
+                            child: Padding(
+                              padding: const EdgeInsets.symmetric(horizontal: 10.0),
+                              child: Row(
+                                children: [
+                                  Image.asset('assets/walli.png',width: 25,),
+                                  SizedBox(width: 5),
+                                  Text(
+                                    'Walli',
+                                    style: TextStyle(color: Colors.white70, fontSize: 18),
+                                  ),
+                                ],
+                              ),
                             ),
                           ),
-                        ),
-                        // Window Control Buttons
-                        Row(
-                          children: [
-                            // Close Button
-                            IconButton(
-                              icon: Icon(Icons.close, color: Colors.white70),
-                              onPressed: () async {
-                                await windowManager.close();
+                          // Window Control Buttons
+                          Row(
+                            children: [
+                              // Close Button
+                              IconButton(
+                                icon: Icon(Icons.close, color: Colors.white70),
+                                onPressed: () async {
+                                  await windowManager.close();
+                                },
+                              ),
+                            ],
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+
+                  Expanded(child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Image.asset('assets/walli.png',width: 250,),
+                      SizedBox(height: 20,),
+                      Text('Walli',style: TextStyle(fontSize: 32,fontWeight: FontWeight.bold,color: accent.accent),textAlign: TextAlign.center,),
+                      Text('Made By Hossein Laletaheri',style: TextStyle(fontSize: 22,fontWeight: FontWeight.bold),textAlign: TextAlign.center,),
+                      SizedBox(height: 30,),
+                      Text('Check Tray Menu!!',style: TextStyle(fontSize: 16),textAlign: TextAlign.center,)
+                    ],
+                  )),
+                  Container(
+                    padding: EdgeInsets.all(15),
+                    // height: 100,
+                    child: Column(
+                      children: [
+                        SizedBox(
+                          width: double.infinity,
+                          child: FancyButton(
+                              onPressed: (){
+                                scheduleWallpaperChange(const Duration(seconds: 0));
                               },
-                            ),
-                          ],
-                        ),
+                              size: 50,
+                              color: accent.accent,
+                              child: Text('Change Now',style: TextStyle(fontWeight: FontWeight.bold,fontSize: 22,color: Theme.of(context).colorScheme.onPrimary),)
+                          ),
+                        )
                       ],
                     ),
                   ),
-                ),
-
-                Expanded(child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Image.asset('assets/walli.png',width: 250,),
-                    SizedBox(height: 20,),
-                    Text('Walli',style: TextStyle(fontSize: 32,fontWeight: FontWeight.bold,color: Theme.of(context).colorScheme.primary),textAlign: TextAlign.center,),
-                    Text('Made By Hossein Laletaheri',style: TextStyle(fontSize: 22,fontWeight: FontWeight.bold),textAlign: TextAlign.center,),
-                    SizedBox(height: 30,),
-                    Text('Check Tray Menu!!',style: TextStyle(fontSize: 16),textAlign: TextAlign.center,)
-                  ],
-                )),
-                Container(
-                  padding: EdgeInsets.all(15),
-                  // height: 100,
-                  child: Column(
-                    children: [
-                      SizedBox(
-                        width: double.infinity,
-                        child: FancyButton(
-                            onPressed: (){
-                              scheduleWallpaperChange(const Duration(seconds: 0));
-                            },
-                            size: 50,
-                            color: Theme.of(context).colorScheme.primary,
-                            child: Text('Change Now',style: TextStyle(fontWeight: FontWeight.bold,fontSize: 22,color: Theme.of(context).colorScheme.onPrimary),)
-                        ),
-                      )
-                    ],
-                  ),
-                ),
-              ],
+                ],
+              ),
             ),
           ),
         ),
-      ),
-    );
+      );
+    });
+
   }
 }
